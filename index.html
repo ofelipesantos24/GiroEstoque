@@ -1,47 +1,134 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8">
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="Controle de estoque e validade para pequenos comércios.">
-  <title>Estoque Vivo — controle sem complicação</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>Giro Estoque</title>
+  <style>
+    :root {
+      --laranja: #f26a00; --laranja-escuro: #b84d00; --laranja-claro: #ffd9b0;
+      --creme: #fff7ee; --tinta: #2b1700; --suave: #7a5a3a;
+      --vermelho: #c62828; --ambar: #a96300; --azul: #1b4f8f;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; font: 17px/1.6 system-ui, "Segoe UI", sans-serif; color: var(--tinta); background: var(--creme); }
+    a { color: inherit; }
+    :focus-visible { outline: 3px solid var(--tinta); outline-offset: 3px; }
+
+    /* Topo + hero */
+    .hero { background: var(--laranja); color: #fff; padding-bottom: 4rem; border-radius: 0 0 48px 48px; }
+    nav { max-width: 1080px; margin: 0 auto; padding: 1.25rem 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+    .logo { display: flex; align-items: center; gap: .6rem; font-weight: 800; font-size: 1.35rem; letter-spacing: -.5px; text-decoration: none; }
+    .logo span { display: grid; place-items: center; width: 40px; height: 40px; background: #fff; border-radius: 12px; }
+    nav .links { display: flex; gap: 1.5rem; align-items: center; font-weight: 600; font-size: .95rem; }
+    nav .links a { text-decoration: none; }
+    nav .links a:hover { text-decoration: underline; }
+    .hero-grid { max-width: 1080px; margin: 2rem auto 0; padding: 0 1.5rem; display: grid; grid-template-columns: 1.1fr .9fr; gap: 3rem; align-items: center; }
+    h1 { font-size: clamp(2.4rem, 6vw, 4.2rem); line-height: 1.02; letter-spacing: -2px; margin: 0 0 1.25rem; }
+    .hero p { font-size: 1.15rem; color: #fff1e0; max-width: 46ch; margin: 0 0 2rem; }
+    .acoes { display: flex; gap: .75rem; flex-wrap: wrap; }
+    .botao { display: inline-block; padding: .9rem 1.6rem; border-radius: 999px; font-weight: 800; text-decoration: none; background: var(--tinta); color: #fff; transition: transform .15s; }
+    .botao:hover { transform: translateY(-2px); }
+    .botao.sec { background: transparent; border: 2px solid #fff; color: #fff; }
+
+    /* Cartão de demonstração */
+    .demo { background: #fff; color: var(--tinta); border-radius: 22px; padding: 1.25rem; box-shadow: 0 24px 50px -18px rgba(70, 25, 0, .55); transform: rotate(2deg); }
+    .demo h2 { font-size: 1rem; margin: 0 0 .75rem; color: var(--suave); font-weight: 700; }
+    .item { display: flex; justify-content: space-between; align-items: center; gap: .75rem; padding: .7rem 0; border-top: 1px solid #f0e2d0; }
+    .item b { display: block; line-height: 1.25; }
+    .item small { color: var(--suave); }
+    .selo { font-size: .8rem; font-weight: 800; padding: .25rem .7rem; border-radius: 999px; white-space: nowrap; }
+    .v { background: #fde3e1; color: var(--vermelho); } .p { background: #ffefcc; color: var(--ambar); } .b { background: #e1ecfa; color: var(--azul); } .o { background: #def3e6; color: #1c6b40; }
+
+    /* Recursos */
+    section.recursos { max-width: 1080px; margin: 0 auto; padding: 5rem 1.5rem 3rem; }
+    section.recursos h2 { font-size: clamp(1.8rem, 4vw, 2.6rem); letter-spacing: -1px; line-height: 1.1; margin: 0 0 .5rem; max-width: 18ch; }
+    section.recursos > p { color: var(--suave); margin: 0 0 2.5rem; max-width: 52ch; }
+    .grade { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+    .card { background: #fff; border: 2px solid var(--laranja-claro); border-radius: 20px; padding: 1.5rem; }
+    .card:nth-child(odd) { background: var(--laranja-claro); border-color: var(--laranja-claro); }
+    .card svg { width: 38px; height: 38px; margin-bottom: .75rem; }
+    .card h3 { margin: 0 0 .3rem; font-size: 1.15rem; }
+    .card p { margin: 0; color: var(--suave); font-size: .97rem; }
+
+    /* Chamada final */
+    .final { max-width: 1080px; margin: 2rem auto 4rem; padding: 0 1.5rem; }
+    .final div { background: var(--tinta); color: #fff; border-radius: 28px; padding: 3rem 2rem; text-align: center; }
+    .final h2 { margin: 0 0 1.25rem; font-size: clamp(1.6rem, 4vw, 2.3rem); letter-spacing: -1px; }
+    .final .botao { background: var(--laranja); }
+    footer { text-align: center; padding: 0 1.5rem 2.5rem; color: var(--suave); font-size: .9rem; }
+
+    @media (max-width: 800px) {
+      .hero-grid { grid-template-columns: 1fr; }
+      .demo { transform: none; }
+      nav .links a:not(.botao) { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } .botao { transition: none; } }
+  </style>
 </head>
 <body>
-  <header class="topbar">
-    <div class="brand"><span class="brand-mark">✳</span><div><strong>Estoque Vivo</strong><small>Seu estoque sob controle</small></div></div>
-    <button id="exportBtn" class="button button-ghost">↓ Exportar CSV</button>
-  </header>
-  <main class="container">
-    <section class="intro">
-      <div><p class="eyebrow">PAINEL DO COMÉRCIO</p><h1>Bom dia. Vamos cuidar do estoque?</h1><p class="muted">Acompanhe o que está acabando e o que precisa sair primeiro.</p></div>
-      <button id="addBtn" class="button button-primary">＋ Novo produto</button>
-    </section>
-    <section class="stats" aria-label="Resumo do estoque">
-      <article class="stat"><span>Produtos cadastrados</span><strong id="totalCount">0</strong><small>itens no inventário</small></article>
-      <article class="stat stat-warn"><span>Estoque baixo</span><strong id="lowCount">0</strong><small>abaixo do mínimo</small></article>
-      <article class="stat stat-danger"><span>Vencendo em 7 dias</span><strong id="soonCount">0</strong><small>atenção necessária</small></article>
-      <article class="stat"><span>Já vencidos</span><strong id="expiredCount">0</strong><small>verifique estes itens</small></article>
-    </section>
-    <section class="panel">
-      <div class="toolbar"><div><h2>Inventário</h2><p class="muted">Busque e filtre seus produtos.</p></div>
-        <div class="filters"><input id="searchInput" type="search" placeholder="Buscar produto..." aria-label="Buscar produto"><select id="filterSelect" aria-label="Filtrar produtos"><option value="all">Todos</option><option value="low">Estoque baixo</option><option value="soon">Vencendo em 7 dias</option><option value="expired">Vencidos</option></select></div>
+  <header class="hero">
+    <nav>
+      <a class="logo" href="#">
+        <span aria-hidden="true">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#f26a00" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.6-5.9"/><path d="M20 3v5h-5"/></svg>
+        </span>
+        Giro Estoque
+      </a>
+      <div class="links"><a href="#recursos">Recursos</a><a class="botao sec" href="#entrar" style="padding:.5rem 1.2rem">Entrar</a></div>
+    </nav>
+
+    <div class="hero-grid">
+      <div>
+        <h1>Seu estoque girando, sem perder nada.</h1>
+        <p>Veja o que está perto de vencer, o que está acabando e o que já tem na prateleira, tudo em uma tela simples para o seu mercado, padaria ou loja.</p>
+        <div class="acoes">
+          <a class="botao" href="#entrar">Começar agora</a>
+          <a class="botao sec" href="#recursos">Ver como funciona</a>
+        </div>
       </div>
-      <div class="table-wrap"><table><thead><tr><th>Produto</th><th>Categoria</th><th>Quantidade</th><th>Validade</th><th>Situação</th><th></th></tr></thead><tbody id="productRows"></tbody></table></div>
-      <div id="emptyState" class="empty" hidden><span>✳</span><strong>Nenhum produto por aqui</strong><p>Cadastre seu primeiro produto para começar.</p></div>
-    </section>
-    <p class="footnote">Seus dados ficam salvos neste navegador. Exporte um CSV para manter uma cópia de segurança.</p>
-  </main>
-  <dialog id="productDialog">
-    <form id="productForm" method="dialog">
-      <div class="dialog-head"><div><p class="eyebrow">INVENTÁRIO</p><h2 id="dialogTitle">Novo produto</h2></div><button type="button" id="closeDialog" class="close" aria-label="Fechar">×</button></div>
-      <input type="hidden" id="productId">
-      <label>Nome do produto<input id="nameInput" required maxlength="80" placeholder="Ex.: Leite integral"></label>
-      <div class="form-grid"><label>Categoria<input id="categoryInput" maxlength="40" placeholder="Ex.: Laticínios"></label><label>Quantidade atual<input id="quantityInput" required type="number" min="0" step="1" value="1"></label></div>
-      <div class="form-grid"><label>Estoque mínimo<input id="minimumInput" required type="number" min="0" step="1" value="2"></label><label>Data de validade<input id="expiryInput" type="date"></label></div>
-      <div class="dialog-actions"><button type="button" id="cancelBtn" class="button button-ghost">Cancelar</button><button type="submit" class="button button-primary">Salvar produto</button></div>
-    </form>
-  </dialog>
-  <script src="app.js"></script>
+
+      <aside class="demo" aria-label="Exemplo de produtos no Giro Estoque">
+        <h2>Hoje na sua loja</h2>
+        <div class="item"><div><b>Pão francês</b><small>10 unidades</small></div><span class="selo v">Vencido</span></div>
+        <div class="item"><div><b>Leite integral 1L</b><small>3 unidades</small></div><span class="selo p">Vence em 2 dias</span></div>
+        <div class="item"><div><b>Café 500g</b><small>2 unidades</small></div><span class="selo b">Estoque baixo</span></div>
+        <div class="item"><div><b>Arroz 5kg</b><small>20 unidades</small></div><span class="selo o">Tudo certo</span></div>
+      </aside>
+    </div>
+  </header>
+
+  <section class="recursos" id="recursos">
+    <h2>Tudo o que seu caderno não avisa.</h2>
+    <p>Pare de descobrir o problema só quando o produto já estragou ou acabou.</p>
+    <div class="grade">
+      <article class="card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#b84d00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M8 3v4M16 3v4M3 10h18"/></svg>
+        <h3>Alerta de validade</h3><p>Saiba quais produtos vencem nos próximos dias e venda antes de perder.</p>
+      </article>
+      <article class="card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#b84d00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 2 20h20L12 3z"/><path d="M12 10v4M12 17h.01"/></svg>
+        <h3>Estoque baixo</h3><p>Receba o aviso antes de faltar e não perca mais vendas.</p>
+      </article>
+      <article class="card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#b84d00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+        <h3>Busca e filtros</h3><p>Encontre qualquer produto em segundos e evite comprar o que já tem.</p>
+      </article>
+      <article class="card">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#b84d00" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>
+        <h3>Exporte para CSV</h3><p>Leve sua lista para o Excel quando precisar fazer o pedido.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="final" id="entrar">
+    <div>
+      <h2>Coloque seu estoque para girar hoje.</h2>
+      <a class="botao" href="#">Começar agora</a>
+    </div>
+  </section>
+
+  <footer>© 2026 Giro Estoque</footer>
 </body>
 </html>
