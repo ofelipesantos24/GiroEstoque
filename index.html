@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Controle de estoque e validade para pequenos comércios.">
+  <title>Estoque Vivo — controle sem complicação</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">✳</span><div><strong>Estoque Vivo</strong><small>Seu estoque sob controle</small></div></div>
+    <button id="exportBtn" class="button button-ghost">↓ Exportar CSV</button>
+  </header>
+  <main class="container">
+    <section class="intro">
+      <div><p class="eyebrow">PAINEL DO COMÉRCIO</p><h1>Bom dia. Vamos cuidar do estoque?</h1><p class="muted">Acompanhe o que está acabando e o que precisa sair primeiro.</p></div>
+      <button id="addBtn" class="button button-primary">＋ Novo produto</button>
+    </section>
+    <section class="stats" aria-label="Resumo do estoque">
+      <article class="stat"><span>Produtos cadastrados</span><strong id="totalCount">0</strong><small>itens no inventário</small></article>
+      <article class="stat stat-warn"><span>Estoque baixo</span><strong id="lowCount">0</strong><small>abaixo do mínimo</small></article>
+      <article class="stat stat-danger"><span>Vencendo em 7 dias</span><strong id="soonCount">0</strong><small>atenção necessária</small></article>
+      <article class="stat"><span>Já vencidos</span><strong id="expiredCount">0</strong><small>verifique estes itens</small></article>
+    </section>
+    <section class="panel">
+      <div class="toolbar"><div><h2>Inventário</h2><p class="muted">Busque e filtre seus produtos.</p></div>
+        <div class="filters"><input id="searchInput" type="search" placeholder="Buscar produto..." aria-label="Buscar produto"><select id="filterSelect" aria-label="Filtrar produtos"><option value="all">Todos</option><option value="low">Estoque baixo</option><option value="soon">Vencendo em 7 dias</option><option value="expired">Vencidos</option></select></div>
+      </div>
+      <div class="table-wrap"><table><thead><tr><th>Produto</th><th>Categoria</th><th>Quantidade</th><th>Validade</th><th>Situação</th><th></th></tr></thead><tbody id="productRows"></tbody></table></div>
+      <div id="emptyState" class="empty" hidden><span>✳</span><strong>Nenhum produto por aqui</strong><p>Cadastre seu primeiro produto para começar.</p></div>
+    </section>
+    <p class="footnote">Seus dados ficam salvos neste navegador. Exporte um CSV para manter uma cópia de segurança.</p>
+  </main>
+  <dialog id="productDialog">
+    <form id="productForm" method="dialog">
+      <div class="dialog-head"><div><p class="eyebrow">INVENTÁRIO</p><h2 id="dialogTitle">Novo produto</h2></div><button type="button" id="closeDialog" class="close" aria-label="Fechar">×</button></div>
+      <input type="hidden" id="productId">
+      <label>Nome do produto<input id="nameInput" required maxlength="80" placeholder="Ex.: Leite integral"></label>
+      <div class="form-grid"><label>Categoria<input id="categoryInput" maxlength="40" placeholder="Ex.: Laticínios"></label><label>Quantidade atual<input id="quantityInput" required type="number" min="0" step="1" value="1"></label></div>
+      <div class="form-grid"><label>Estoque mínimo<input id="minimumInput" required type="number" min="0" step="1" value="2"></label><label>Data de validade<input id="expiryInput" type="date"></label></div>
+      <div class="dialog-actions"><button type="button" id="cancelBtn" class="button button-ghost">Cancelar</button><button type="submit" class="button button-primary">Salvar produto</button></div>
+    </form>
+  </dialog>
+  <script src="app.js"></script>
+</body>
+</html>
